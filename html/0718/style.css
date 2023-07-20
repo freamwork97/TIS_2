@@ -1,0 +1,37 @@
+@import url("https://fonts.googleapis.com/css2?family=Sunflower:wght@500&display=swap");
+* {
+  font-family: "Sunflower", sans-serif;
+}
+.title {
+  text-align: center;
+  color: green;
+}
+
+form {
+  width: 500px;
+  margin: 0px auto;
+  border: 1px solid gray;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+input,
+select {
+  padding: 5px 10px;
+}
+
+table {
+  width: 500px;
+  margin: 0px auto;
+  border-collapse: collapse;
+}
+td {
+  border-bottom: 1px dotted gray;
+  padding-top: 10px;
+}
+
+.row:hover {
+  background: gray;
+  color: white;
+  cursor: pointer;
+}

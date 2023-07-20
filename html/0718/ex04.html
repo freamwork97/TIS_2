@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
+  </head>
+  <body>
+    <div id="list"></div>
+    <script id="temp" type="text/x-handlebars-template">
+      {{#each .}}
+      <h5>
+        {{id}}:{{title}}
+      </h5>
+      {{/each}}
+    </script>
+  </body>
+  <script>
+    get();
+    function get() {
+      $.ajax({
+        type: "get",
+        url: "https://jsonplaceholder.typicode.com/todos",
+        dateType: "json",
+        success: function (data) {
+          let rows = data.filter((t) => t.id <= 5);
+          let temp = Handlebars.compile($("#temp").html());
+          let html = temp(rows);
+          $("#list").html(html);
+          //   console.log(data);
+        },
+      });
+    }
+  </script>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>여덟번째예제</title>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <style>
+      button {
+        background: cyan;
+        color: white;
+        font-size: 20px;
+        padding: 5px 20px;
+        margin-right: 10px;
+        border-radius: 10px;
+      }
+      #page {
+        font-size: 30px;
+        padding: 0px 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="btn1">1~100까지 합</button>
+    <button id="btn2">1~100까지 짝수합</button>
+    <button id="btn3">1~100까지 홀수합</button>
+    <h1>결과:<span id="result"></span></h1>
+    <hr />
+    <button id="prev">이전</button>
+    <span id="page">1</span>
+    <button id="next">다음</button>
+  </body>
+  <script>
+    let page = 1;
+    let last = 5;
+    $("#page").html(page);
+    // 다음버튼을 클릭한경우
+    $("#next").on("click", function () {
+      page++;
+      $("#page").html(page);
+    });
+
+    // 이전버튼클릭
+    $("#prev").on("click", function () {
+      page--;
+      $("#page").html(page);
+    });
+    let sum = 0;
+
+    $("#btn1").on("click", function () {
+      sum = 0;
+      for (let i = 1; i <= 100; i++) {
+        sum += i;
+      }
+      $("#result").html(sum);
+    });
+
+    $("#btn2").on("click", function () {
+      sum = 0;
+      for (let i = 1; i <= 100; i++) {
+        if (i % 2 == 0) {
+          sum += i;
+        }
+      }
+      $("#result").html(sum);
+    });
+
+    $("#btn3").on("click", function () {
+      sum = 0;
+      for (let i = 1; i <= 100; i++) {
+        if (i % 2 == 1) {
+          sum += i;
+        }
+      }
+      $("#result").html(sum);
+    });
+  </script>
+</html>

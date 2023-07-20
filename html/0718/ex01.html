@@ -1,0 +1,96 @@
+<html>
+  <head>
+    <title>상품관리</title>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1 class="title">상품관리</h1>
+    <!-- 입력폼 -->
+    <form name="frm">
+      <input type="text" name="code" placeholder="상품코드" size="10" />
+      <hr />
+      <input type="text" name="name" placeholder="상품이름" size="50" />
+      <hr />
+      <input type="number" name="price" size="10" step="1000" min="0" />원
+      <hr />
+      <input type="submit" value="상품등록" />
+      <input type="reset" value="등록취소" />
+    </form>
+    <h1 class="title">상품목록</h1>
+    <!-- 상품목록 들어갈공간 -->
+    <div id="list"></div>
+    <!-- 상품목록 출력될공간 -->
+    <script id="temp" type="text/x-handlebars-template">
+          <table>
+            {{#each .}}
+                <tr index="{{@index}}" sname=""{{sname}}>
+                    <td class="code">{{code}}</td>
+                    <td >{{name}}</td>
+                    <td>{{price}}</td>
+                    <td><button>삭제</button></td>
+                </tr>
+            {{/each}}
+      </table>
+    </script>
+  </body>
+  <script>
+    let code = 103;
+    $(frm.code).val(code);
+    //각행의 삭제버튼을 클릭한 경우
+    $("#list").on("click", "tr td button", function () {
+      let tr = $(this).parent().parent();
+      let index = tr.attr("index");
+      let code = tr.find(".code").text();
+      if (confirm(`${code}번 삭제?`)) {
+        products.splice(index, 1);
+        getList();
+      }
+    });
+    //상품 json 데이터
+    let products = [
+      { code: 100, name: "오브제 냉장고", price: 2500000 },
+      { code: 101, name: "오브제 세탁기", price: 1500000 },
+      { code: 102, name: "오브제 스타일러", price: 1200000 },
+    ];
+    getList();
+
+    //목록 출력하는 함수
+    function getList() {
+      let temp = Handlebars.compile($("#temp").html());
+      let html = temp(products);
+      $("#list").html(html);
+    }
+    // 폼이 서밋될때 유효성체크
+    $(frm).on("submit", function (e) {
+      e.preventDefault();
+      let code = $(frm.code).val();
+      let name = $(frm.name).val();
+      let price = $(frm.price).val();
+      if (code == "") {
+        alert("상품코드 입력해");
+        $(frm.code).focus();
+      } else if (name == "") {
+        alert("상품이름 입력해");
+        $(frm.name).focus();
+      } else if (price == "") {
+        alert("상품가격 입력해");
+        $(frm.price).focus();
+      } else {
+        if (confirm("새로운 상품 등록해?")) {
+          const product = { code: code, name: name, price: price };
+          products.push(product);
+          getList();
+          alert(
+            `상품코드 : ${code} \n상품이름 : ${name}\n상품가격 : ${price}\n등록완료`
+          );
+          code++;
+          $(frm.code).val(code);
+        } else {
+          alert("등록취소");
+        }
+      }
+    });
+  </script>
+</html>

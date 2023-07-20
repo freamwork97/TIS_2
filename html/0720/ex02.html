@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- head -->
+  <head>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
+    <!-- CSS only -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+      crossorigin="anonymous"
+    />
+    <!-- JavaScript Bundle with Popper -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+      crossorigin="anonymous"
+    ></script>
+    <title>지역검색</title>
+    <link rel="stylesheet" href="style.css" />
+    <script
+      type="text/javascript"
+      src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0305c1dbb55fcc11ed39bb3db91acf15"
+    ></script>
+  </head>
+  <!-- body -->
+  <body>
+    <div class="row my-5">
+      <div class="col px-5">
+        <h1 class="text-center mb-5">장소검색</h1>
+        <div class="row justify-content-end mb-3">
+          <form class="col-6 col-md-3" name="frm">
+            <div class="input-group">
+              <input class="form_control" name="query" />
+              <button class="btn btn-primary">검색</button>
+            </div>
+          </form>
+        </div>
+        <div id="div_local"></div>
+        <div class="text-center">
+          <button id="prev" class="btn btn-primary px-5">이전</button>
+          <span id="page" class="mx-3">1</span>
+          <button id="next" class="btn btn-primary px-5">다음</button>
+        </div>
+      </div>
+    </div>
+  </body>
+  <!-- 지역목록출력 템플릿 시작-->
+  <script id="temp_local" type="text/x-handlebars-template">
+    <table class="table table-dark table-striped">
+      {{#each documents}}
+        <tr>
+          <td>{{place_name}}</td>
+          <td>{{address_name}}</td>
+          <td>{{phone}}</td>
+          <td><button
+              index="{{@index}}"
+              class="btn btn-primary btn-sm px-3"
+            >위치</button></td>
+        </tr>
+        <!-- Modal -->
+        <div
+          class="modal fade"
+          id="modal_local{{@index}}"
+          data-bs-backdrop="static"
+          data-bs-keyboard="false"
+          tabindex="-1"
+          aria-labelledby="staticBackdropLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">
+                  {{place_name}}</h1>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <h5>주소:{{address_name}}<br /> 전화번호:{{phone}}</h5>
+                <div id="map" style="width:500px;height:400px;"></div>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-bs-dismiss="modal"
+                >Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Modal end -->
+
+      {{/each}}
+    </table>
+  </script>
+  <!-- 지역목록출력 템플릿 끝-->
+
+  <script>
+    var container = document.getElementById("map");
+    var options = {
+      center: new kakao.maps.LatLng(33.450701, 126.570667),
+      level: 3,
+    };
+
+    var map = new kakao.maps.Map(container, options);
+  </script>
+  <script>
+    let page = 1;
+    let query = "인천 버거킹";
+    $(frm.query).val(query);
+    getList();
+
+    //위치버튼누를때
+    $("#div_local").on("click", ".btn-primary", function () {
+      const index = $(this).attr("index");
+      //   alert(index);
+      $("#modal_local" + index).modal("show");
+    });
+
+    //검색버튼누를때
+    $(frm).on("submit", function (e) {
+      e.preventDefault();
+      query = $(frm.query).val();
+      getList();
+    });
+
+    //다음버튼누를때
+    $("#next").on("click", function () {
+      page++;
+      getList();
+    });
+
+    //이전버튼누를때
+    $("#prev").on("click", function () {
+      page--;
+      getList();
+    });
+    //페이지값 변경
+    // $("#page").on("change", function (e) {
+    //엔터키입력
+    //   if (e.keyCode == 13) {
+    //   page = $("#page").val();
+    //   getList();
+    //   }
+    // });
+
+    function getList() {
+      // api사용하기 위한 함수시작
+      $.ajax({
+        type: "get",
+        url: "https://dapi.kakao.com/v2/local/search/keyword.json",
+        dataType: "json",
+        data: { query: query, size: 5, page: page },
+        headers: { Authorization: "KakaoAK e5bc96b743171ae2602fdb6c032ba120" },
+        success: function (data) {
+          console.log(data);
+          const temp_local = Handlebars.compile($("#temp_local").html());
+          const html_local = temp_local(data);
+          $("#div_local").html(html_local);
+          const last = Math.ceil(data.meta.pageable_count / 5);
+          $("#page").html(page + "/" + last);
+
+          if (page == 1) $("#prev").attr("disabled", true);
+          else $("#prev").attr("disabled", false);
+
+          if (data.meta.is_end) $("#next").attr("disabled", true);
+          else $("#next").attr("disabled", false);
+        },
+      });
+    }
+    // api사용하기 위한 함수끝
+  </script>
+</html>

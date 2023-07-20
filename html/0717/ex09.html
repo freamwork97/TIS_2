@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>아홉번째예제</title>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  </head>
+  <body>
+    <form name="frm">
+      번호 : <input name="no" size="5" placeholder="번호" value="1" readonly />
+      <hr />
+      이름 : <input name="name" size="10" placeholder="이름" />
+      <hr />
+      주소 :
+      <input name="juso" size="50" value="인천 남구 학익동 인천일보 아카데미" />
+      <hr />
+      <input type="submit" value="등록" />
+      <input type="reset" value="취소" />
+    </form>
+    <hr />
+    <h1>주소목록</h1>
+    <table border="1" id="tbl">
+      <tr>
+        <td width="100">번호</td>
+        <td width="100">이름</td>
+        <td width="500">주소</td>
+        <td width="100">삭제</td>
+      </tr>
+    </table>
+  </body>
+  <script>
+    let no = 1;
+    //각행의 삭제버튼을 클릭한경우
+    $("#tbl").on("click", ".row button", function () {
+      //   alert("....");
+      let row = $(this).parent().parent();
+      let name = row.find(".name").html();
+      if (confirm(`${name}을 삭제?`)) row.remove();
+    });
+    //폼이 서밋될 때
+    $(frm).on("submit", function (e) {
+      e.preventDefault();
+      let no = $(frm.no).val();
+      let name = $(frm.name).val();
+      let juso = $(frm.juso).val();
+      if (no == "") {
+        alert("번호를 입력하세요");
+        $(frm.no).focus();
+      } else if (name == "") {
+        alert("이름을 입력하세요");
+        $(frm.name).focus();
+      } else if (juso == "") {
+        alert("주소를 입력하세요");
+        $(frm.juso).focus();
+      } else {
+        if (confirm("새로운 주소 등록?")) {
+          console.log(no, name, juso);
+          let html = `<tr class="row">`;
+          html += `<td>` + no + `</td>`;
+          html += `<td class="name">` + name + `</td>`;
+          html += `<td>` + juso + `</td>`;
+          html += `<td><button>삭제</button></td>`;
+          html += "</tr>";
+          $("#tbl").append(html);
+          no++;
+          $(frm.no).val(no);
+          $(frm.name).val("");
+          //   frm.submit();
+        }
+      }
+    });
+  </script>
+</html>

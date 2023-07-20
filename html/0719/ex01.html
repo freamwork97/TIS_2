@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
+    <!-- CSS only -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+      crossorigin="anonymous"
+    />
+    <!-- JavaScript Bundle with Popper -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+      crossorigin="anonymous"
+    ></script>
+    <title>학생관리</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="row justify-content-center my-5">
+      <div class="col-md-6 px-5">
+        <h1 class="text-center mb-4">학생관리</h1>
+        <!-- 학생데이터를 출력할 영역 -->
+        <div id="div_student"></div>
+      </div>
+    </div>
+    <!-- 학생데이터를 출력할 템플릿 -->
+    <script id="temp_student" type="text/x-handlebars-template">
+      <table class="table table-striped">
+          {{#each .}}
+            <tr>
+              <td>{{scode}}</td>
+              <td>{{sname}}</td>
+              <td>{{dept}} : {{getName dept}}</td>
+            </tr>
+          {{/each}}
+      </table>
+    </script>
+    <script>
+      //학과코드로 학과명 출력하는 함수
+      Handlebars.registerHelper("getName", function (dept) {
+        switch (dept) {
+          case "10":
+            return "컴정";
+          case "11":
+            return "전자";
+          case "12":
+            return "통신";
+        }
+      });
+    </script>
+  </body>
+  <script>
+    //json
+    let data = [
+      {
+        scode: "202301",
+        sname: "홍갈동",
+        dept: "10",
+      },
+      {
+        scode: "202302",
+        sname: "이순신",
+        dept: "11",
+      },
+      {
+        scode: "202303",
+        sname: "강감찬",
+        dept: "12",
+      },
+      {
+        scode: "202304",
+        sname: "성춘향",
+        dept: "10",
+      },
+    ];
+    //템플릿컴파일
+    const temp = Handlebars.compile($("#temp_student").html());
+    //데이터 -> 템플릿
+    const html = temp(data);
+    //html -> dvi
+    $("#div_student").html(html);
+  </script>
+</html>

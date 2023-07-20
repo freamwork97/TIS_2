@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
+    <style>
+      #posts {
+        width: 800px;
+        margin: 0px auto;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 출력할 영역 -->
+    <div id="posts"></div>
+    <!-- 출력할 템플릿 -->
+    <script id="temp_posts" type="text/x-handlebars-template">
+      {{#each .}}
+      <h5>
+        {{id}}:{{title}}
+      </h5>
+      <hr>
+      <p>{{body}}</p>
+      {{/each}}
+    </script>
+  </body>
+  <script>
+    //게시글목록 데이터출력
+    getPosts();
+    function getPosts() {
+      $.ajax({
+        type: "get",
+        url: "https://jsonplaceholder.typicode.com/posts",
+        dateType: "json",
+        success: function (data) {
+          const rows = data.filter((post) => post.id <= 10);
+          // console.log(rows);
+          //1.템플릿 컴파일
+          let temp = Handlebars.compile($("#temp_posts").html());
+          //2.템플릿에 데이터넣기
+          let html = temp(rows);
+          //3.출력영역 html넣기
+          $("#posts").html(html);
+        },
+      });
+    }
+  </script>
+</html>
